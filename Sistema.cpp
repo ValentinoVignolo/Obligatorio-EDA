@@ -23,6 +23,7 @@ Sistema crearNodo(Cadena nom)
 	n->pH=NULL;
 	n->sH=NULL;
 	n->Parchivo=NULL;
+	return n;
 }
 void insertarInicio(Sistema &s, Sistema nuevo) //inserta nodo al inicio
 {
@@ -46,6 +47,13 @@ void insertarOrdenado(Sistema &s, Sistema nuevo) //insertar nodo ordenado
 	Sistema aux = NULL;
 	
 	aux = s->Parchivo;
+	if(listaVacia(s))
+	{
+		nuevo->siguiente = s->Parchivo;
+		nuevo->anterior = NULL;
+		s->Parchivo = nuevo;	
+		return;
+	}
 	while(aux->siguiente && strcmp(aux->siguiente->nombre, nuevo->nombre)< 0)
 	{
 		aux = aux->siguiente;
@@ -82,14 +90,6 @@ Cadena strdup(const Cadena cade)
 	return nuevo_cade;
 }
 
-Directorio crearNodoDirectorio(Cadena nomb)
-{
-	Directorio n=new directorio;
-	n->nombre=strdup(nomb);
-	n->pH=NULL;
-	n->sH=NULL;
-	n->Parchivo=NULL;
-}
 //void insertar ( Directorio&arbol, Directorio Anuevo)
 //{
 // if (arbol==NULL) // si no hay nada inserta
@@ -97,13 +97,12 @@ Directorio crearNodoDirectorio(Cadena nomb)
 // else
 // 	if()
 // 	else
-// 		if(strcmp(arbol->nombre, Anuevo->nombre)=0)
-// 			;
+// 		if(strcmp(arbol->nombre, Anuevo->nombre)=0);
  }
- TipoRet MKDIR(Directorio &s, Cadena nombreDirectorio)
+ TipoRet MKDIR(Sistema &s, Cadena nombreDirectorio)
  {
-    Directorio aux=s, Anuevo;
-    Anuevo=crearNodoDirectorio(nombreDirectorio);
+    Sistema aux=s, Anuevo;
+    Anuevo=crearNodo(nombreDirectorio);
     if(aux->pH=NULL)
         aux->pH=Anuevo;
     else 
@@ -133,7 +132,7 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo)
 	strcpy(auxCF, nombreArchivo);
 	strcpy(auxCF2,"");
 	while (aux != NULL) {
-		if (strcmp(aux->nombre, nombreArchivo) == 0 &&  aux->esDirectorio == (false))
+		if (strcmp(aux->nombre, nombreArchivo) == 0 )
 		{
 			return ERROR;
 		}
@@ -141,7 +140,7 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo)
 	}
 	if(strlen(nombreArchivo) <= MAX_NOMBREARCHIVO)
 	{
-		insertarOrdenado(s,crearNodo(auxCF,auxCF2,false,false));
+		insertarOrdenado(s,crearNodoArchivo(auxCF,auxCF2,false));
 		return OK;
 	}
 	else
@@ -153,16 +152,16 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo)
 TipoRet DIR (Sistema &s, Cadena parametro)
 {
 	
-	Sistema aux=s->Parchi;
+	Sistema aux=s->Parchivo;
 	while(aux)
 	{	
-		if(aux->esDirectorio ==(true))
-		{
-			cout<< aux->nombre <<"/";
-			aux = aux->siguiente;
-		}
-		else
-		{ 
+//		if(aux->esDirectorio ==(true))
+//		{
+//			cout<< aux->nombre <<"/";
+//			aux = aux->siguiente;
+//		}
+//		else
+//		{ 
 			if(aux->soloLectura == 0)
 			{
 				cout<<endl<< aux->nombre<<"     Lectura/Escritura";
@@ -173,7 +172,7 @@ TipoRet DIR (Sistema &s, Cadena parametro)
 				cout<<endl<< aux->nombre<<"     Lectura";
 				aux = aux->siguiente;
 			}
-		}
+//		}
 	}
 	cout<<endl;
 	return OK;
@@ -183,7 +182,7 @@ TipoRet DELETE (Sistema &s, Cadena nombreArchivo)
 {
 	Sistema aux=NULL;
 	Sistema aux2=NULL;
-	aux = s->Parchi;
+	aux = s->Parchivo;
 	while(aux->siguiente && strcmp(aux->siguiente->nombre,nombreArchivo)!=0)
 	{
 		aux=aux->siguiente;
@@ -201,8 +200,8 @@ TipoRet DELETE (Sistema &s, Cadena nombreArchivo)
 TipoRet IFF (Sistema &s, Cadena nombreArchivo, Cadena texto)
 {
 	Sistema aux=NULL;
-	aux = s->Parchi;
-	while(aux->siguiente && (strcmp(aux->siguiente->nombre,nombreArchivo)!=0 || aux->siguiente->esDirectorio == true))
+	aux = s->Parchivo;
+	while(aux->siguiente && strcmp(aux->siguiente->nombre,nombreArchivo)!=0)
 	{
 		aux=aux->siguiente;
 	}
@@ -234,8 +233,8 @@ TipoRet IFF (Sistema &s, Cadena nombreArchivo, Cadena texto)
 TipoRet TYPE (Sistema &s, Cadena nombreArchivo)
 {
 	Sistema aux=NULL;
-	aux = s->Parchi;
-	while(aux->siguiente && (strcmp(aux->siguiente->nombre,nombreArchivo)!=0 || aux->siguiente->esDirectorio == true))
+	aux = s->Parchivo;
+	while(aux->siguiente && strcmp(aux->siguiente->nombre,nombreArchivo)!=0)
 	{
 		aux=aux->siguiente;
 	}
@@ -256,8 +255,8 @@ TipoRet TYPE (Sistema &s, Cadena nombreArchivo)
 TipoRet ATTRIB (Sistema &s, Cadena nombreArchivo, Cadena parametro)
 {
 	Sistema aux=NULL;
-	aux = s->Parchi;
-	while(aux->siguiente && (strcmp(aux->siguiente->nombre,nombreArchivo)!=0 || aux->siguiente->esDirectorio == true))
+	aux = s->Parchivo;
+	while(aux->siguiente && strcmp(aux->siguiente->nombre,nombreArchivo)!=0)
 	{
 		aux=aux->siguiente;
 	}
