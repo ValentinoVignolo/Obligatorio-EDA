@@ -8,7 +8,7 @@ int main(int argc, char *argv[]) {
 	Cadena aux1=new char, aux2=new char;
 	strcpy(aux1,"raiz");
 	strcpy(aux2,"");
-	insertarInicio(sis, crearNodo(aux1, aux2 ,false,true));
+	insertarInicio(sis, crearNodo(aux1, aux2 ,false));
 	
 	char *palabras = new char[100]; // cadena a leer
 	char *pal = new char[100];      // donde guardo palabra obtenida actual
@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
 	
 	do {
 		gets(palabras); // leer cadena completa
-//		cout<<strlwr("ALOJA");
+//		cout<<strlwr("HOLA");
 		pal = strtok(palabras, divisor); // obtengo la primera palabra
 		if (pal != NULL) {
 			// verificar comando ingresado y realizar acciï¿½n correspondiente
