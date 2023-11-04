@@ -5,10 +5,9 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 	Sistema sis = NULL;
-	Cadena aux1=new char, aux2=new char;
+	Cadena aux1=new char;
 	strcpy(aux1,"raiz");
-	strcpy(aux2,"");
-	insertarInicio(sis, crearNodo(aux1, aux2 ,false));
+	insertarSistema(sis, crearNodo(aux1));
 	
 	char *palabras = new char[100]; // cadena a leer
 	char *pal = new char[100];      // donde guardo palabra obtenida actual
@@ -20,7 +19,7 @@ int main(int argc, char *argv[]) {
 //		cout<<strlwr("HOLA");
 		pal = strtok(palabras, divisor); // obtengo la primera palabra
 		if (pal != NULL) {
-			// verificar comando ingresado y realizar acciï¿½n correspondiente
+			// verificar comando ingresado y realizar acci�n correspondiente
 			if (strcmp(pal, "createfile") == 0) 
 			{
 				pal = strtok(NULL, divisor);
