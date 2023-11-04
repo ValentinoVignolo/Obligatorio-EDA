@@ -1,37 +1,39 @@
 #include "Sistema.hpp"
-#include<iostream>
+#include <iostream>
+#include <cstring>
+#include <stdio.h>
 using namespace std;
 bool listaVacia(Archivo lista)
 {
 	return (lista == NULL);
 }
 
-Archivo crearNodoArchivo(Cadena nomb, Cadena txt, bool lect) 
+Archivo crearNodoArchivo(Cadena nomb, Cadena txt, bool lect)
 {
-	Archivo n=new archivo;
+	Archivo n = new archivo;
 	n->nombre = strdup(nomb);
-	n->contenido=strdup(txt);
-	n->soloLectura=lect;
-	n->siguiente=NULL;
-	n->anterior=NULL;
+	n->contenido = strdup(txt);
+	n->soloLectura = lect;
+	n->siguiente = NULL;
+	n->anterior = NULL;
 	return n;
 }
 Sistema crearNodo(Cadena nom)
 {
-	Sistema n=new sistema;
+	Sistema n = new sistema;
 	n->nombre = strdup(nom);
-	n->pH=NULL;
-	n->sH=NULL;
-	n->Parchivo=NULL;
+	n->pH = NULL;
+	n->sH = NULL;
+	n->Parchivo = NULL;
 	return n;
 }
-void insertarInicio(Sistema &s, Sistema nuevo) //inserta nodo al inicio
+void insertarInicio(Sistema &s, Archivo nuevo) // inserta nodo al inicio
 {
-	if(listaVacia(s))
+	if (listaVacia(s->Parchivo))
 	{
 		nuevo->siguiente = s->Parchivo;
 		nuevo->anterior = NULL;
-		s->Parchivo = nuevo;	
+		s->Parchivo = nuevo;
 	}
 	else
 	{
@@ -39,26 +41,26 @@ void insertarInicio(Sistema &s, Sistema nuevo) //inserta nodo al inicio
 		s->Parchivo->anterior = nuevo;
 		nuevo->anterior = NULL;
 		s->Parchivo = nuevo;
-	} 
+	}
 }
 
-void insertarOrdenado(Sistema &s, Sistema nuevo) //insertar nodo ordenado
+void insertarOrdenado(Sistema &s, Archivo nuevo) // insertar nodo ordenado
 {
-	Sistema aux = NULL;
-	
+	Archivo aux = NULL;
+
 	aux = s->Parchivo;
-	if(listaVacia(s))
+	if (listaVacia(s->Parchivo))
 	{
 		nuevo->siguiente = s->Parchivo;
 		nuevo->anterior = NULL;
-		s->Parchivo = nuevo;	
+		s->Parchivo = nuevo;
 		return;
 	}
-	while(aux->siguiente && strcmp(aux->siguiente->nombre, nuevo->nombre)< 0)
+	while (aux->siguiente && strcmp(aux->siguiente->nombre, nuevo->nombre) < 0)
 	{
 		aux = aux->siguiente;
 	}
-	if(aux->siguiente == NULL)
+	if (aux->siguiente == NULL)
 	{
 		nuevo->siguiente = aux->siguiente;
 		aux->siguiente = nuevo;
@@ -71,10 +73,9 @@ void insertarOrdenado(Sistema &s, Sistema nuevo) //insertar nodo ordenado
 		aux->siguiente = nuevo;
 		nuevo->anterior = aux;
 	}
-	
-} 
+}
 
-Cadena strdup(const Cadena cade) 
+Cadena strdup(const Cadena cade)
 {
 	if (cade == NULL)
 	{
@@ -82,7 +83,7 @@ Cadena strdup(const Cadena cade)
 	}
 	int largo = strlen(cade) + 1;
 	Cadena nuevo_cade = new char[largo];
-	
+
 	if (nuevo_cade != NULL)
 	{
 		strcpy(nuevo_cade, cade);
@@ -90,104 +91,138 @@ Cadena strdup(const Cadena cade)
 	return nuevo_cade;
 }
 
-//void insertar ( Directorio&arbol, Directorio Anuevo)
-//{
-// if (arbol==NULL) // si no hay nada inserta
-//	 arbol=Anuevo;
-// else
-// 	if()
-// 	else
-// 		if(strcmp(arbol->nombre, Anuevo->nombre)=0);
- }
- TipoRet MKDIR(Sistema &s, Cadena nombreDirectorio)
- {
-    Sistema aux=s, Anuevo;
-    Anuevo=crearNodo(nombreDirectorio);
-    if(aux->pH=NULL)
-        aux->pH=Anuevo;
-    else 
-        if(strcmp(aux->pH->nombre,Anuevo->nombre)<0)
-        {
-            Anuevo->sH=aux->pH;
-            aux->pH=Anuevo;
-        }
-        else
-        {
-            while(aux->sH!=NULL && strcmp(aux->sH->nombre,Anuevo->nombre))
-                aux=aux->sH;
-            if(aux->sH=NULL)
-                aux->sH=Anuevo;
-            else
-            {
-                Anuevo->sH=aux->sH;
-                aux->sH=Anuevo;
-            }
-        }
-        return NO_IMPLEMENTADA;
- }
+void insertarSistema(Sistema &s, Sistema nuevo)
+{
+	Sistema aux = s;
+	if (aux->pH == NULL)
+	{
+		aux->pH = nuevo;
+	}
+	else
+	{
+		if (strcmp(aux->pH->nombre, nuevo->nombre) < 0)
+		{
+			nuevo->sH = aux->pH;
+			aux->pH = nuevo;
+		}
+		else
+		{
+			while (aux->sH != NULL && strcmp(aux->sH->nombre, nuevo->nombre) < 0)
+			{
+				aux = aux->sH;
+			}
+			if (aux->sH == NULL)
+			{
+				aux->sH = nuevo;
+			}
+			else
+			{
+				nuevo->sH = aux->sH;
+				aux->sH = nuevo;
+			}
+		}
+	}
+}
 TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo)
 {
-	Sistema aux = s->Parchivo;
-	Cadena auxCF=new char, auxCF2=new char;
+	Archivo aux = s->Parchivo;
+	Cadena auxCF = new char, auxCF2 = new char;
 	strcpy(auxCF, nombreArchivo);
-	strcpy(auxCF2,"");
-	while (aux != NULL) {
-		if (strcmp(aux->nombre, nombreArchivo) == 0 )
+	strcpy(auxCF2, "");
+	while (aux != NULL)
+	{
+		if (strcmp(aux->nombre, nombreArchivo) == 0)
 		{
 			return ERROR;
 		}
 		aux = aux->siguiente;
 	}
-	if(strlen(nombreArchivo) <= MAX_NOMBREARCHIVO)
+	if (strlen(nombreArchivo) <= MAX_NOMBREARCHIVO)
 	{
-		insertarOrdenado(s,crearNodoArchivo(auxCF,auxCF2,false));
+		insertarOrdenado(s, crearNodoArchivo(auxCF, auxCF2, false));
 		return OK;
 	}
 	else
 	{
-		cout<<"Error:El Nombre del Archivo solo puede contener 15 caracteres"<<endl;
+		cout << "Error:El Nombre del Archivo solo puede contener 15 caracteres" << endl;
 	}
-	return NO_IMPLEMENTADA;	
+	return NO_IMPLEMENTADA;
 }
-TipoRet DIR (Sistema &s, Cadena parametro)
+TipoRet DIR(Sistema &s, Cadena parametro)
 {
-	
-	Sistema aux=s->Parchivo;
-	while(aux)
-	{	
-//		if(aux->esDirectorio ==(true))
-//		{
-//			cout<< aux->nombre <<"/";
-//			aux = aux->siguiente;
-//		}
-//		else
-//		{ 
-			if(aux->soloLectura == 0)
+
+	Archivo aux = s->Parchivo;
+	Sistema auxsis= s, auxher=s;
+	if (strcmp(parametro, "/s") == 0)
+	{
+		while(auxsis)
+		{
+			cout<<auxsis->nombre;
+			if(aux!=NULL)	
 			{
-				cout<<endl<< aux->nombre<<"     Lectura/Escritura";
-				aux = aux->siguiente;
+				cout<<"/"<<aux->nombre;
+				aux=aux->siguiente;
 			}
-			else if(aux->soloLectura == 1)
+			else
 			{
-				cout<<endl<< aux->nombre<<"     Lectura";
-				aux = aux->siguiente;
-			}
-//		}
+				while (auxsis->sh!=NULL && auxher->sH!=NULL)
+				{
+					cout<<"/"<<auxher->sH;
+					auxher=auxher->sH;
+				}
+				
+			}	
+		}		
 	}
-	cout<<endl;
-	return OK;
+		if(aux!=NULL)
+			{
+				cout<<aux->nombre;
+				aux=aux->siguiente;
+			}
+	else
+	{
+		if(strcmp(parametro, ""))
+		{
+			while (aux)
+			{
+				//		if(aux->esDirectorio ==(true))
+				//		{
+				//			cout<< aux->nombre <<"/";
+				//			aux = aux->siguiente;
+				//		}
+				//		else
+				//		{
+				if (aux->soloLectura == 0)
+				{
+					cout << endl
+					<< aux->nombre << "     Lectura/Escritura";
+					aux = aux->siguiente;
+				}
+				else if (aux->soloLectura == 1)
+				{
+					cout << endl
+						 << aux->nombre << "     Lectura";
+					aux = aux->siguiente;
+				}
+				//		}
+			}
+		}
+		cout << endl;
+		return OK;
+	}
+	return NO_IMPLEMENTADA
 }
 
-TipoRet DELETE (Sistema &s, Cadena nombreArchivo)
+TipoRet DELETE(Sistema &s, Cadena nombreArchivo)
 {
-	Sistema aux=NULL;
-	Sistema aux2=NULL;
+	Archivo aux = NULL;
+	Archivo aux2 = NULL;
 	aux = s->Parchivo;
-	while(aux->siguiente && strcmp(aux->siguiente->nombre,nombreArchivo)!=0)
+	while (aux->siguiente && strcmp(aux->siguiente->nombre, nombreArchivo) != 0)
 	{
-		aux=aux->siguiente;
+		aux = aux->siguiente;
 	}
-	if(aux->siguiente!=NULL && aux->siguiente->soloLectura == (false))
+	if (aux->siguiente != NULL && aux->siguiente->soloLectura == (false))
 	{
 		aux2 = aux->siguiente;
 		aux->siguiente = aux2->siguiente;
@@ -195,33 +230,33 @@ TipoRet DELETE (Sistema &s, Cadena nombreArchivo)
 		return OK;
 	}
 	else
-	   return ERROR;	
+		return ERROR;
 }
-TipoRet IFF (Sistema &s, Cadena nombreArchivo, Cadena texto)
+TipoRet IFF(Sistema &s, Cadena nombreArchivo, Cadena texto)
 {
-	Sistema aux=NULL;
+	Archivo aux = NULL;
 	aux = s->Parchivo;
-	while(aux->siguiente && strcmp(aux->siguiente->nombre,nombreArchivo)!=0)
+	while (aux->siguiente && strcmp(aux->siguiente->nombre, nombreArchivo) != 0)
 	{
-		aux=aux->siguiente;
+		aux = aux->siguiente;
 	}
-	
-	if (aux->siguiente != NULL && aux->siguiente->soloLectura == false )
+
+	if (aux->siguiente != NULL && aux->siguiente->soloLectura == false)
 	{
 		int nuevoLargo = strlen(aux->siguiente->contenido) + strlen(texto);
-		if(nuevoLargo <= TEXTO_MAX)	
+		if (nuevoLargo <= TEXTO_MAX)
 		{
 			Cadena nuevoContenido = new char[nuevoLargo + 1];
 			strcpy(nuevoContenido, texto);
 			strcat(nuevoContenido, aux->siguiente->contenido);
 			delete[] aux->siguiente->contenido;
 			aux->siguiente->contenido = nuevoContenido;
-			
+
 			return OK;
 		}
 		else
 		{
-		   return ERROR;
+			return ERROR;
 		}
 	}
 	else
@@ -230,21 +265,21 @@ TipoRet IFF (Sistema &s, Cadena nombreArchivo, Cadena texto)
 	}
 }
 
-TipoRet TYPE (Sistema &s, Cadena nombreArchivo)
+TipoRet TYPE(Sistema &s, Cadena nombreArchivo)
 {
-	Sistema aux=NULL;
+	Archivo aux = NULL;
 	aux = s->Parchivo;
-	while(aux->siguiente && strcmp(aux->siguiente->nombre,nombreArchivo)!=0)
+	while (aux->siguiente && strcmp(aux->siguiente->nombre, nombreArchivo) != 0)
 	{
-		aux=aux->siguiente;
+		aux = aux->siguiente;
 	}
-	
-	if (aux->siguiente != NULL )
+
+	if (aux->siguiente != NULL)
 	{
-		if(strcmp(aux->siguiente->contenido, "") !=0)
-			cout<<aux->siguiente->contenido<<endl;
+		if (strcmp(aux->siguiente->contenido, "") != 0)
+			cout << aux->siguiente->contenido << endl;
 		else
-			cout<<"El archivo no tiene contenido"<<endl;
+			cout << "El archivo no tiene contenido" << endl;
 		return OK;
 	}
 	else
@@ -252,30 +287,30 @@ TipoRet TYPE (Sistema &s, Cadena nombreArchivo)
 		return ERROR;
 	}
 }
-TipoRet ATTRIB (Sistema &s, Cadena nombreArchivo, Cadena parametro)
+TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro)
 {
-	Sistema aux=NULL;
+	Archivo aux = NULL;
 	aux = s->Parchivo;
-	while(aux->siguiente && strcmp(aux->siguiente->nombre,nombreArchivo)!=0)
+	while (aux->siguiente && strcmp(aux->siguiente->nombre, nombreArchivo) != 0)
 	{
-		aux=aux->siguiente;
+		aux = aux->siguiente;
 	}
-	
-	if (aux->siguiente != NULL )
+
+	if (aux->siguiente != NULL)
 	{
-		if(strcmp(parametro, "-w")==0)
+		if (strcmp(parametro, "-w") == 0)
 		{
 			aux->siguiente->soloLectura = (true);
 			return OK;
-		}		
-		else if(strcmp(parametro, "+w")==0)
+		}
+		else if (strcmp(parametro, "+w") == 0)
 		{
 			aux->siguiente->soloLectura = (false);
 			return OK;
 		}
 		else
 		{
-			cout<<"Los parametros validos son +w para lectura y escritura, -w solo para lectursa"<<endl;
+			cout << "Los parametros validos son +w para lectura y escritura, -w solo para lectursa" << endl;
 		}
 	}
 	else
@@ -284,7 +319,7 @@ TipoRet ATTRIB (Sistema &s, Cadena nombreArchivo, Cadena parametro)
 	}
 	return NO_IMPLEMENTADA;
 }
-TipoRet CD (Sistema &s, Cadena nombreDirectorio)
+TipoRet CD(Sistema &s, Cadena nombreDirectorio)
 {
-
+	return NO_IMPLEMENTADA;
 }

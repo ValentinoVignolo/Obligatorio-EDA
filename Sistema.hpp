@@ -41,7 +41,7 @@ Cadena strdup(const Cadena str);
 //
 // Funciones de arbol
 Sistema crearNodo(Cadena);
-void insertar (Sistema &, Sistema);
+void insertarSistema (Sistema &, Sistema);
 //
 //empiezan las funciones del obligatorio
 TipoRet CREATEFILE (Sistema &, Cadena);
@@ -50,6 +50,6 @@ TipoRet DELETE (Sistema &, Cadena);
 TipoRet ATTRIB (Sistema &, Cadena ,Cadena);
 TipoRet IFF (Sistema &, Cadena, Cadena);
 TipoRet TYPE (Sistema &, Cadena);
-TipoRet CD (Sistema &s, Cadena nombreDirectorio);
-TipoRet MKDIR (Sistema &s, Cadena nombreDirectorio);
+TipoRet CD (Sistema &, Cadena);
+TipoRet MKDIR (Sistema &s, Cadena);
 #endif
