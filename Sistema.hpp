@@ -34,7 +34,7 @@ typedef sistema *Sistema;
 //
 //funciones de listas
 Archivo crearNodoArchivo(Cadena,Cadena,bool);
-bool listaVacia(Sistema);
+bool listaVacia(Archivo);
 void insertarInicio(Sistema &, Sistema);
 void insertarOrdenado(Sistema &, Sistema);
 Cadena strdup(const Cadena str);
@@ -42,6 +42,7 @@ Cadena strdup(const Cadena str);
 // Funciones de arbol
 Sistema crearNodo(Cadena);
 void insertarSistema (Sistema &, Sistema);
+bool SistemaVacia(Sistema);
 //
 //empiezan las funciones del obligatorio
 TipoRet CREATEFILE (Sistema &, Cadena);
@@ -50,6 +51,10 @@ TipoRet DELETE (Sistema &, Cadena);
 TipoRet ATTRIB (Sistema &, Cadena ,Cadena);
 TipoRet IFF (Sistema &, Cadena, Cadena);
 TipoRet TYPE (Sistema &, Cadena);
+
 TipoRet CD (Sistema &, Cadena);
-TipoRet MKDIR (Sistema &s, Cadena);
+TipoRet MKDIR (Sistema &, Cadena);
+TipoRet RMDIR (Sistema &, Cadena);
+TipoRet MOVE (Sistema &, Cadena, Cadena );
+TipoRet DESTRUIRSISTEMA(Sistema &);
 #endif

@@ -1,13 +1,14 @@
 #include "Sistema.hpp"
 #include <iostream>
-#include <cstring>
-#include <stdio.h>
 using namespace std;
 bool listaVacia(Archivo lista)
 {
 	return (lista == NULL);
 }
-
+bool SistemaVacia(Sistema sis)
+{
+	return (sis == NULL);
+}
 Archivo crearNodoArchivo(Cadena nomb, Cadena txt, bool lect)
 {
 	Archivo n = new archivo;
@@ -47,7 +48,7 @@ void insertarInicio(Sistema &s, Archivo nuevo) // inserta nodo al inicio
 void insertarOrdenado(Sistema &s, Archivo nuevo) // insertar nodo ordenado
 {
 	Archivo aux = NULL;
-
+	
 	aux = s->Parchivo;
 	if (listaVacia(s->Parchivo))
 	{
@@ -83,7 +84,7 @@ Cadena strdup(const Cadena cade)
 	}
 	int largo = strlen(cade) + 1;
 	Cadena nuevo_cade = new char[largo];
-
+	
 	if (nuevo_cade != NULL)
 	{
 		strcpy(nuevo_cade, cade);
@@ -93,8 +94,13 @@ Cadena strdup(const Cadena cade)
 
 void insertarSistema(Sistema &s, Sistema nuevo)
 {
-	Sistema aux = s;
-	if (aux->pH == NULL)
+	Sistema aux = NULL;
+	aux = s;
+	if (SistemaVacia(s))
+	{
+		s = nuevo;
+	}
+	else if(aux->pH == NULL)
 	{
 		aux->pH = nuevo;
 	}
@@ -150,12 +156,12 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo)
 }
 TipoRet DIR(Sistema &s, Cadena parametro)
 {
-
+	
 	Archivo aux = s->Parchivo;
-	Sistema auxsis= s, auxher=s;
+	Sistema auxsis = s, auxher=s;
 	if (strcmp(parametro, "/s") == 0)
 	{
-		while(auxsis)
+		while(auxsis->sH)
 		{
 			cout<<auxsis->nombre;
 			if(aux!=NULL)	
@@ -165,7 +171,7 @@ TipoRet DIR(Sistema &s, Cadena parametro)
 			}
 			else
 			{
-				while (auxsis->sh!=NULL && auxher->sH!=NULL)
+				while (auxsis->sH!=NULL && auxher->sH!=NULL)
 				{
 					cout<<"/"<<auxher->sH;
 					auxher=auxher->sH;
@@ -174,43 +180,40 @@ TipoRet DIR(Sistema &s, Cadena parametro)
 			}	
 		}		
 	}
-		if(aux!=NULL)
-			{
-				cout<<aux->nombre;
-				aux=aux->siguiente;
-			}
 	else
 	{
-		if(strcmp(parametro, ""))
+		if(strcmp(parametro, "0")==0)
 		{
 			while (aux)
 			{
-				//		if(aux->esDirectorio ==(true))
-				//		{
-				//			cout<< aux->nombre <<"/";
-				//			aux = aux->siguiente;
-				//		}
-				//		else
-				//		{
 				if (aux->soloLectura == 0)
 				{
 					cout << endl
-					<< aux->nombre << "     Lectura/Escritura";
+						<< aux->nombre << "     Lectura/Escritura";
 					aux = aux->siguiente;
 				}
 				else if (aux->soloLectura == 1)
 				{
 					cout << endl
-						 << aux->nombre << "     Lectura";
+						<< aux->nombre << "     Lectura";
 					aux = aux->siguiente;
 				}
-				//		}
 			}
+			if(auxsis->pH != NULL)
+			{	   
+				auxsis = auxsis->pH;
+				while(auxsis !=NULL)
+				{
+					cout << endl
+						<< auxsis->nombre;
+					auxsis = auxsis->sH;
+				}
+			}		
 		}
 		cout << endl;
 		return OK;
 	}
-	return NO_IMPLEMENTADA
+	return NO_IMPLEMENTADA;
 }
 
 TipoRet DELETE(Sistema &s, Cadena nombreArchivo)
@@ -230,7 +233,7 @@ TipoRet DELETE(Sistema &s, Cadena nombreArchivo)
 		return OK;
 	}
 	else
-		return ERROR;
+																  return ERROR;
 }
 TipoRet IFF(Sistema &s, Cadena nombreArchivo, Cadena texto)
 {
@@ -240,7 +243,7 @@ TipoRet IFF(Sistema &s, Cadena nombreArchivo, Cadena texto)
 	{
 		aux = aux->siguiente;
 	}
-
+	
 	if (aux->siguiente != NULL && aux->siguiente->soloLectura == false)
 	{
 		int nuevoLargo = strlen(aux->siguiente->contenido) + strlen(texto);
@@ -251,7 +254,7 @@ TipoRet IFF(Sistema &s, Cadena nombreArchivo, Cadena texto)
 			strcat(nuevoContenido, aux->siguiente->contenido);
 			delete[] aux->siguiente->contenido;
 			aux->siguiente->contenido = nuevoContenido;
-
+			
 			return OK;
 		}
 		else
@@ -273,7 +276,7 @@ TipoRet TYPE(Sistema &s, Cadena nombreArchivo)
 	{
 		aux = aux->siguiente;
 	}
-
+	
 	if (aux->siguiente != NULL)
 	{
 		if (strcmp(aux->siguiente->contenido, "") != 0)
@@ -295,7 +298,7 @@ TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro)
 	{
 		aux = aux->siguiente;
 	}
-
+	
 	if (aux->siguiente != NULL)
 	{
 		if (strcmp(parametro, "-w") == 0)
@@ -320,6 +323,112 @@ TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro)
 	return NO_IMPLEMENTADA;
 }
 TipoRet CD(Sistema &s, Cadena nombreDirectorio)
+{
+	cout << "Intentando cambiar al directorio: " << nombreDirectorio << endl;
+	
+	if (strcmp(nombreDirectorio, "..") == 0)
+	{
+		// Ir al directorio padre
+		if (strcmp(s->nombre, "raiz") != 0)
+		{
+			Sistema padre = NULL;
+			Sistema aux = s;
+			while (aux->sH != NULL && strcmp(aux->sH->nombre, s->nombre) != 0)
+			{
+				padre = aux;
+				aux = aux->sH;
+			}
+			
+			if (padre != NULL)
+			{
+				s = padre;
+				cout << "Cambiado al directorio padre." << endl;
+				return OK;
+			}
+			else
+			{
+				cout << "Error: Ya estás en el directorio raíz." << endl;
+				return ERROR;
+			}
+		}
+		else
+		{
+			cout << "Error: Ya estas en el directorio raíz." << endl;
+		}
+	}
+	else
+	{
+		// Ir al directorio hijo
+		if (s->pH != NULL)
+		{
+			Sistema aux = s->pH;
+			while (aux != NULL && strcmp(aux->nombre, nombreDirectorio) != 0)
+			{
+				aux = aux->sH;
+			}
+			
+			if (aux != NULL)
+			{
+				s = aux;
+				return OK;
+			}
+			else
+			{
+				cout << " No existe el subdirectorio destino." << endl;
+				return ERROR;
+			}
+		}
+		else
+		{
+			cout << "Error: No hay subdirectorios en el directorio actual." << endl;
+		}
+	}
+	
+	
+	return NO_IMPLEMENTADA;
+}
+TipoRet MKDIR (Sistema &s, Cadena nombreDirectorio)
+{
+	Sistema aux = s;
+	Cadena CF = new char;
+	strcpy(CF, "Raiz");
+	if (nombreDirectorio != CF)
+	{ 
+		if(aux->pH !=NULL)
+		{	
+			aux = aux->pH;
+			while (aux != NULL)
+			{
+				if (strcmp(aux->nombre, nombreDirectorio) == 0)
+				{
+					return ERROR;
+				}
+				aux = aux->sH;
+			}
+			insertarSistema(s, crearNodo(nombreDirectorio));
+			return OK;
+		}
+		else
+		{
+			insertarSistema(s, crearNodo(nombreDirectorio));
+			return OK;
+		}
+	}
+	else
+	{
+		return ERROR;
+	}
+	return NO_IMPLEMENTADA;
+}
+TipoRet RMDIR (Sistema &s, Cadena nombreDirectorio)
+{
+	return NO_IMPLEMENTADA;
+}
+TipoRet MOVE (Sistema &s, Cadena nombre, Cadena directorioDestino)
+{
+	return NO_IMPLEMENTADA;
+}
+TipoRet DESTRUIRSISTEMA(Sistema &s)
 {
 	return NO_IMPLEMENTADA;
 }

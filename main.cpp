@@ -5,13 +5,13 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 	Sistema sis = NULL;
-	Cadena aux1=new char;
+	Cadena aux1 = new char;
 	strcpy(aux1,"raiz");
 	insertarSistema(sis, crearNodo(aux1));
 	
-	char *palabras = new char[100]; // cadena a leer
-	char *pal = new char[100];      // donde guardo palabra obtenida actual
-	char *pal2 = new char[100];
+	Cadena palabras = new char[100]; // cadena a leer
+	Cadena pal = new char[100];      // donde guardo palabra obtenida actual
+	Cadena pal2 = new char[100];
 	const char divisor[2] = " ";    // defino lo que divide cada palabra
 	
 	do {
@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 //		cout<<strlwr("HOLA");
 		pal = strtok(palabras, divisor); // obtengo la primera palabra
 		if (pal != NULL) {
-			// verificar comando ingresado y realizar acci�n correspondiente
+			// verificar comando ingresado y realizar acciï¿½n correspondiente
 			if (strcmp(pal, "createfile") == 0) 
 			{
 				pal = strtok(NULL, divisor);
@@ -39,17 +39,29 @@ int main(int argc, char *argv[]) {
 			} 
 			else if (strcmp(pal, "dir") == 0) 
 			{
-				Cadena directorio;
-				directorio = sis->nombre;
-				TipoRet ret = DIR (sis, directorio);
-				if(ret==OK)
-					cout<<"";
+				pal = strtok(NULL, divisor);
+				if(pal !=NULL && strcmp(pal,"/s")==0)
+				{
+						Cadena parametro;
+						parametro = pal;
+						TipoRet ret = DIR (sis, parametro);
+						if(ret==OK)
+							cout<<"";
+				}
+				else
+				{
+					Cadena parametro = new char;
+					strcpy(parametro, "0");
+					TipoRet ret = DIR (sis,parametro);
+					if(ret==OK)
+						cout<<"";
+				}
 			}
 			else if (strcmp(pal, "delete") == 0) 
 			{
 				pal = strtok(NULL, divisor);
 				if (pal != NULL) 
-					{
+				{
 					TipoRet ret = DELETE (sis, pal);
 					if(ret == OK)
 						cout<<"El Archivo fue Eliminado"<<endl;
@@ -138,7 +150,52 @@ int main(int argc, char *argv[]) {
 				{
 					cout<<"Error: falta el nombre del archivo"<<endl;
 				}
-			}	
+			}
+			else if (strcmp(pal, "mkdir") == 0) 
+			{
+				pal = strtok(NULL, divisor);
+				// obtener nombre del directorio
+				if (pal != NULL)
+				{
+					TipoRet ret = MKDIR(sis, pal);
+					if (ret == OK)
+						cout << "El Directorio se creo correctamente"<<endl;
+					else if (ret == ERROR)
+					{
+						cout<<"ERROR:Ya existe un Directorio con ese nombre o"<<endl;
+						cout<<"ERROR:El nombre del Directorio no puede ser Raiz"<<endl;
+					}
+				}
+				else 
+				{
+					cout << "Error: Falta el nombre para crear el Directorio." << endl;
+				}
+			} 
+			else if (strcmp(pal, "cd") == 0) 
+			{
+				pal = strtok(NULL, divisor);
+				TipoRet ret = CD(sis, pal);
+				if (ret == ERROR)
+					cout << "ERROR:" << endl;
+			}
+			else if (strcmp(pal, "rmdir") == 0) 
+			{
+				TipoRet ret = RMDIR(sis, pal);
+				if (ret == NO_IMPLEMENTADA)
+					cout << "NO IMPLEMENTADO"<<endl;
+			}
+			else if (strcmp(pal, "move") == 0) 
+			{
+				TipoRet ret = MOVE(sis, pal, pal2);
+				if (ret == NO_IMPLEMENTADA)
+					cout << "NO IMPLEMENTADO"<<endl;
+			}
+			else if (strcmp(pal, "destruirsistema") == 0) 
+			{
+				TipoRet ret = DESTRUIRSISTEMA(sis);
+				if (ret == NO_IMPLEMENTADA)
+					cout << "NO IMPLEMENTADO"<<endl;
+			}
 			else if (strcmp(pal, "cls") == 0) 
 			{
 				system("cls");
