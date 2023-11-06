@@ -176,7 +176,7 @@ int main(int argc, char *argv[]) {
 				pal = strtok(NULL, divisor);
 				TipoRet ret = CD(sis, pal);
 				if (ret == ERROR)
-					cout << "ERROR:" << endl;
+					cout << "ERROR DETECTADO, ANALIZAR LA SENTENCIA ANTERIOR" << endl;
 			}
 			else if (strcmp(pal, "rmdir") == 0) 
 			{

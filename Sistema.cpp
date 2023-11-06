@@ -25,24 +25,9 @@ Sistema crearNodo(Cadena nom)
 	n->nombre = strdup(nom);
 	n->pH = NULL;
 	n->sH = NULL;
+	n->pPadre = NULL;
 	n->Parchivo = NULL;
 	return n;
-}
-void insertarInicio(Sistema &s, Archivo nuevo) // inserta nodo al inicio
-{
-	if (listaVacia(s->Parchivo))
-	{
-		nuevo->siguiente = s->Parchivo;
-		nuevo->anterior = NULL;
-		s->Parchivo = nuevo;
-	}
-	else
-	{
-		nuevo->siguiente = s->Parchivo;
-		s->Parchivo->anterior = nuevo;
-		nuevo->anterior = NULL;
-		s->Parchivo = nuevo;
-	}
 }
 
 void insertarOrdenado(Sistema &s, Archivo nuevo) // insertar nodo ordenado
@@ -103,6 +88,7 @@ void insertarSistema(Sistema &s, Sistema nuevo)
 	else if(aux->pH == NULL)
 	{
 		aux->pH = nuevo;
+		nuevo->pPadre = aux; // actualiza el puntero al padre
 	}
 	else
 	{
@@ -110,6 +96,7 @@ void insertarSistema(Sistema &s, Sistema nuevo)
 		{
 			nuevo->sH = aux->pH;
 			aux->pH = nuevo;
+			nuevo->pPadre = aux;
 		}
 		else
 		{
@@ -120,11 +107,13 @@ void insertarSistema(Sistema &s, Sistema nuevo)
 			if (aux->sH == NULL)
 			{
 				aux->sH = nuevo;
+				nuevo->pPadre = aux;
 			}
 			else
 			{
 				nuevo->sH = aux->sH;
 				aux->sH = nuevo;
+				nuevo->pPadre = aux->pPadre;
 			}
 		}
 	}
@@ -324,36 +313,19 @@ TipoRet ATTRIB(Sistema &s, Cadena nombreArchivo, Cadena parametro)
 }
 TipoRet CD(Sistema &s, Cadena nombreDirectorio)
 {
-	cout << "Intentando cambiar al directorio: " << nombreDirectorio << endl;
 	
 	if (strcmp(nombreDirectorio, "..") == 0)
 	{
 		// Ir al directorio padre
-		if (strcmp(s->nombre, "raiz") != 0)
+		if (s->pPadre != NULL)
 		{
-			Sistema padre = NULL;
-			Sistema aux = s;
-			while (aux->sH != NULL && strcmp(aux->sH->nombre, s->nombre) != 0)
-			{
-				padre = aux;
-				aux = aux->sH;
-			}
-			
-			if (padre != NULL)
-			{
-				s = padre;
-				cout << "Cambiado al directorio padre." << endl;
-				return OK;
-			}
-			else
-			{
-				cout << "Error: Ya estás en el directorio raíz." << endl;
-				return ERROR;
-			}
+			s = s->pPadre;  // Mueve al directorio padre
+			return OK;
 		}
 		else
 		{
-			cout << "Error: Ya estas en el directorio raíz." << endl;
+			cout<< "ERROR: Ya estas en el directorio raiz." << endl;
+			return ERROR;
 		}
 	}
 	else
@@ -374,7 +346,7 @@ TipoRet CD(Sistema &s, Cadena nombreDirectorio)
 			}
 			else
 			{
-				cout << " No existe el subdirectorio destino." << endl;
+				cout << "ERROR: No existe el subdirectorio destino." << endl;
 				return ERROR;
 			}
 		}
