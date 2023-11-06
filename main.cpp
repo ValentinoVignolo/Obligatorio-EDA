@@ -180,12 +180,14 @@ int main(int argc, char *argv[]) {
 			}
 			else if (strcmp(pal, "rmdir") == 0) 
 			{
+				pal = strtok(NULL, divisor);
 				TipoRet ret = RMDIR(sis, pal);
 				if (ret == NO_IMPLEMENTADA)
 					cout << "NO IMPLEMENTADO"<<endl;
 			}
 			else if (strcmp(pal, "move") == 0) 
 			{
+				
 				TipoRet ret = MOVE(sis, pal, pal2);
 				if (ret == NO_IMPLEMENTADA)
 					cout << "NO IMPLEMENTADO"<<endl;

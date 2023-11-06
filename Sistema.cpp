@@ -222,7 +222,7 @@ TipoRet DELETE(Sistema &s, Cadena nombreArchivo)
 		return OK;
 	}
 	else
-																  return ERROR;
+	return ERROR;
 }
 TipoRet IFF(Sistema &s, Cadena nombreArchivo, Cadena texto)
 {
@@ -394,6 +394,39 @@ TipoRet MKDIR (Sistema &s, Cadena nombreDirectorio)
 }
 TipoRet RMDIR (Sistema &s, Cadena nombreDirectorio)
 {
+	if (strcmp(nombreDirectorio, "Raiz") == 0) 
+	{
+		// No se puede eliminar el directorio RAIZ
+		return ERROR;
+	}
+	
+	Sistema auxSub = s->pH;
+	//Cuando el directorio es el primer hijo
+	if(strcmp (auxSub->nombre,nombreDirectorio)==0)
+	{
+		s->pH = auxSub->sH;
+		DESTRUIRSISTEMA(auxSub);
+	}
+	// Busca el directorio a eliminar
+	while (auxSub->sH != NULL && strcmp(auxSub->sH->nombre, nombreDirectorio) != 0) 
+	{
+		auxSub = auxSub->sH;
+	}
+	// Elimina todos los archivos y subdirectorios del directorio a eliminar
+	if (auxSub->sH != NULL) 
+	{
+		Sistema AuxElim = auxSub->sH;
+		auxSub->sH = AuxElim->sH;
+		DESTRUIRSISTEMA(AuxElim);
+		cout<<"DEBUG: destruir sistema devolvio"<<endl;
+		return OK;
+		
+	}
+	else
+	{
+	// No se encontró el directorio a eliminar
+	return ERROR;
+	}
 	return NO_IMPLEMENTADA;
 }
 TipoRet MOVE (Sistema &s, Cadena nombre, Cadena directorioDestino)
@@ -402,5 +435,39 @@ TipoRet MOVE (Sistema &s, Cadena nombre, Cadena directorioDestino)
 }
 TipoRet DESTRUIRSISTEMA(Sistema &s)
 {
+	if (s == NULL) {
+		// Si el sistema ya es nulo, no hay nada que destruir
+		return ERROR;
+	}
+	
+	// Llama a una función auxiliar para destruir recursivamente los nodos del sistema
+		if (s != NULL) {
+			// Llama a la función para destruir la lista de archivos asociada a este sistema
+			destruirListaArchivos(s->Parchivo);
+			
+			// Llama a la función para destruir recursivamente los hijos de este sistema
+			DESTRUIRSISTEMA(s->pH);
+			
+			// Llama a la función para destruir recursivamente los hermanos de este sistema
+			DESTRUIRSISTEMA(s->sH);
+			
+			// Libera la memoria asociada al nodo actual
+			delete s;
+	}
+	
+	// Asigna NULL al puntero del sistema para indicar que ya no hay estructuras válidas
+	s = NULL;
+	
+	return OK;
 	return NO_IMPLEMENTADA;
+}
+void destruirListaArchivos(Archivo &archi) 
+{
+	while (archi != NULL) {
+		Archivo auxElim = archi;
+		archi = archi->siguiente;
+		delete auxElim->nombre;
+		delete auxElim->contenido;
+		delete auxElim;
+	}
 }

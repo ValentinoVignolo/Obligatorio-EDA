@@ -28,6 +28,7 @@ struct sistema
 	Cadena nombre;
 	sistema *pH; // apunta al primer hijo
 	sistema *sH; //apunta al siguiente hermano
+	sistema *pPadre;  // nuevo campo para apuntar al padre
 	Archivo Parchivo;//apunta a sus archivos
 };
 typedef sistema *Sistema;
@@ -35,8 +36,10 @@ typedef sistema *Sistema;
 //funciones de listas
 Archivo crearNodoArchivo(Cadena,Cadena,bool);
 bool listaVacia(Archivo);
-void insertarInicio(Sistema &, Sistema);
 void insertarOrdenado(Sistema &, Sistema);
+void destruirListaArchivos(Archivo &);
+//
+// Funcion adicional
 Cadena strdup(const Cadena str);
 //
 // Funciones de arbol
@@ -51,7 +54,6 @@ TipoRet DELETE (Sistema &, Cadena);
 TipoRet ATTRIB (Sistema &, Cadena ,Cadena);
 TipoRet IFF (Sistema &, Cadena, Cadena);
 TipoRet TYPE (Sistema &, Cadena);
-
 TipoRet CD (Sistema &, Cadena);
 TipoRet MKDIR (Sistema &, Cadena);
 TipoRet RMDIR (Sistema &, Cadena);
