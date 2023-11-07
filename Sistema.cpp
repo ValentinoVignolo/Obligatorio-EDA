@@ -400,12 +400,15 @@ TipoRet RMDIR (Sistema &s, Cadena nombreDirectorio)
 		return ERROR;
 	}
 	
+	Sistema auxActual = s;
 	Sistema auxSub = s->pH;
-	//Cuando el directorio es el primer hijo
-	if(strcmp (auxSub->nombre,nombreDirectorio)==0)
+	//Si el directorio es el primer hijo
+	if(strcmp (auxActual->pH->nombre,nombreDirectorio)==0)
 	{
-		s->pH = auxSub->sH;
+		s->pH = auxActual->pH->sH;
 		DESTRUIRSISTEMA(auxSub);
+		return OK;
+		
 	}
 	// Busca el directorio a eliminar
 	while (auxSub->sH != NULL && strcmp(auxSub->sH->nombre, nombreDirectorio) != 0) 
@@ -446,10 +449,15 @@ TipoRet DESTRUIRSISTEMA(Sistema &s)
 			destruirListaArchivos(s->Parchivo);
 			
 			// Llama a la función para destruir recursivamente los hijos de este sistema
-			DESTRUIRSISTEMA(s->pH);
+			if(s->pH != NULL)
+			{
+				if(s->pH->sH != NULL)
+				DESTRUIRSISTEMA(s->pH->sH);
+			}
 			
-			// Llama a la función para destruir recursivamente los hermanos de este sistema
-			DESTRUIRSISTEMA(s->sH);
+			// Llama a la función para destruir recursivamente los hijos de este sistema
+			if(s->pH != NULL)
+			DESTRUIRSISTEMA(s->pH);
 			
 			// Libera la memoria asociada al nodo actual
 			delete s;
