@@ -213,6 +213,7 @@ int main(int argc, char *argv[]) {
 			else if (strcmp(pal, "destruirsistema") == 0) 
 			{
 				TipoRet ret = DESTRUIRSISTEMA(sis);
+				strcpy(palabras,"exit");
 				if (ret == NO_IMPLEMENTADA)
 					cout << "NO IMPLEMENTADO"<<endl;
 			}

@@ -91,30 +91,22 @@ void insertarSistema(Sistema &s, Sistema nuevo)
 		nuevo->pPadre = aux; // actualiza el puntero al padre
 	}
 	else
-	{
-		if (strcmp(aux->pH->nombre, nuevo->nombre) >= 0)
+	{	
+		aux = aux->pH;
+		while (aux->sH != NULL && strcmp(aux->sH->nombre, nuevo->nombre) < 0)
 		{
-			nuevo->sH = aux->pH;
-			aux->pH = nuevo;
+			aux = aux->sH;
+		}
+		if (aux->sH == NULL)
+		{
+			aux->sH = nuevo;
 			nuevo->pPadre = aux;
 		}
 		else
 		{
-			while (aux->sH != NULL && strcmp(aux->sH->nombre, nuevo->nombre) <= 0)
-			{
-				aux = aux->sH;
-			}
-			if (aux->sH == NULL)
-			{
-				aux->sH = nuevo;
-				nuevo->pPadre = aux;
-			}
-			else
-			{
-				nuevo->sH = aux->sH;
-				aux->sH = nuevo;
-				nuevo->pPadre = aux->pPadre;
-			}
+			nuevo->sH = aux->sH;
+			aux->sH = nuevo;
+			nuevo->pPadre = aux->pPadre;
 		}
 	}
 }
