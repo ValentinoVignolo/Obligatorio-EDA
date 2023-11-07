@@ -163,7 +163,7 @@ int main(int argc, char *argv[]) {
 					else if (ret == ERROR)
 					{
 						cout<<"ERROR:Ya existe un Directorio con ese nombre o"<<endl;
-						cout<<"ERROR:El nombre del Directorio no puede ser Raiz"<<endl;
+						cout<<"		 El nombre del Directorio no puede ser Raiz"<<endl;
 					}
 				}
 				else 
@@ -173,17 +173,35 @@ int main(int argc, char *argv[]) {
 			} 
 			else if (strcmp(pal, "cd") == 0) 
 			{
-				pal = strtok(NULL, divisor);
-				TipoRet ret = CD(sis, pal);
-				if (ret == ERROR)
-					cout << "ERROR DETECTADO, ANALIZAR LA SENTENCIA ANTERIOR" << endl;
+				if(pal != NULL)
+				{
+					pal = strtok(NULL, divisor);
+					TipoRet ret = CD(sis, pal);
+					if (ret == ERROR)
+						cout << "ERROR DETECTADO, ANALIZAR LA SENTENCIA ANTERIOR" << endl;
+				}
+				else 
+				{
+						cout<<"Falta el Nombre del Subdirectorio al que quiere ingresar o el parametro .."<<endl;
+				}
 			}
 			else if (strcmp(pal, "rmdir") == 0) 
 			{
 				pal = strtok(NULL, divisor);
-				TipoRet ret = RMDIR(sis, pal);
-				if (ret == NO_IMPLEMENTADA)
-					cout << "NO IMPLEMENTADO"<<endl;
+				if(pal != NULL)
+				{
+					TipoRet ret = RMDIR(sis, pal);
+					if(ret == OK)
+						cout<<"El subdirectorio se a eliminado exitosamente"<<endl;
+					else if(ret == ERROR)
+						cout<<"No existe el subdirectorio a eliminar"<<endl;
+					else if (ret == NO_IMPLEMENTADA)
+						cout << "NO IMPLEMENTADO"<<endl;
+				}
+				else 
+				{
+					cout<<"Error: falta el nombre del subdirectorio a eliminar"<<endl;
+				}
 			}
 			else if (strcmp(pal, "move") == 0) 
 			{

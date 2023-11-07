@@ -92,7 +92,7 @@ void insertarSistema(Sistema &s, Sistema nuevo)
 	}
 	else
 	{
-		if (strcmp(aux->pH->nombre, nuevo->nombre) < 0)
+		if (strcmp(aux->pH->nombre, nuevo->nombre) >= 0)
 		{
 			nuevo->sH = aux->pH;
 			aux->pH = nuevo;
@@ -100,7 +100,7 @@ void insertarSistema(Sistema &s, Sistema nuevo)
 		}
 		else
 		{
-			while (aux->sH != NULL && strcmp(aux->sH->nombre, nuevo->nombre) < 0)
+			while (aux->sH != NULL && strcmp(aux->sH->nombre, nuevo->nombre) <= 0)
 			{
 				aux = aux->sH;
 			}
@@ -393,13 +393,7 @@ TipoRet MKDIR (Sistema &s, Cadena nombreDirectorio)
 	return NO_IMPLEMENTADA;
 }
 TipoRet RMDIR (Sistema &s, Cadena nombreDirectorio)
-{
-	if (strcmp(nombreDirectorio, "Raiz") == 0) 
-	{
-		// No se puede eliminar el directorio RAIZ
-		return ERROR;
-	}
-	
+{	
 	Sistema auxActual = s;
 	Sistema auxSub = s->pH;
 	//Si el directorio es el primer hijo
@@ -438,40 +432,34 @@ TipoRet MOVE (Sistema &s, Cadena nombre, Cadena directorioDestino)
 }
 TipoRet DESTRUIRSISTEMA(Sistema &s)
 {
-	if (s == NULL) {
-		// Si el sistema ya es nulo, no hay nada que destruir
-		return ERROR;
-	}
-	
-	// Llama a una función auxiliar para destruir recursivamente los nodos del sistema
-		if (s != NULL) {
-			// Llama a la función para destruir la lista de archivos asociada a este sistema
-			destruirListaArchivos(s->Parchivo);
-			
-			// Llama a la función para destruir recursivamente los hijos de este sistema
-			if(s->pH != NULL)
-			{
-				if(s->pH->sH != NULL)
+	if (s != NULL) 
+	{
+		// Llama a la funcion para destruir la lista de archivos apuntada por este sistema
+		destruirListaArchivos(s->Parchivo);
+		
+		// Llama a la funcion para destruir recursivamente los siguientes hijos de este sistema
+		if(s->pH != NULL)
+		{
+			if(s->pH->sH != NULL)
 				DESTRUIRSISTEMA(s->pH->sH);
-			}
-			
-			// Llama a la función para destruir recursivamente los hijos de este sistema
-			if(s->pH != NULL)
-			DESTRUIRSISTEMA(s->pH);
-			
-			// Libera la memoria asociada al nodo actual
-			delete s;
+		}
+		
+		// Llama a la funcion para destruir recursivamente el primer hijos de este sistema
+		if(s->pH != NULL)
+		   DESTRUIRSISTEMA(s->pH);
+		
+		// Libera la memoria del nodo actual
+		delete s;
 	}
-	
-	// Asigna NULL al puntero del sistema para indicar que ya no hay estructuras válidas
+	// Asigna NULL al puntero del sistema para decirle que ya no hay estructuras validas
 	s = NULL;
-	
-	return OK;
-	return NO_IMPLEMENTADA;
+	return OK;	
+
 }
 void destruirListaArchivos(Archivo &archi) 
 {
-	while (archi != NULL) {
+	while (archi != NULL) 
+	{
 		Archivo auxElim = archi;
 		archi = archi->siguiente;
 		delete auxElim->nombre;
