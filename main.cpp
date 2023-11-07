@@ -173,9 +173,9 @@ int main(int argc, char *argv[]) {
 			} 
 			else if (strcmp(pal, "cd") == 0) 
 			{
+				pal = strtok(NULL, divisor);
 				if(pal != NULL)
 				{
-					pal = strtok(NULL, divisor);
 					TipoRet ret = CD(sis, pal);
 					if (ret == ERROR)
 						cout << "ERROR DETECTADO, ANALIZAR LA SENTENCIA ANTERIOR" << endl;

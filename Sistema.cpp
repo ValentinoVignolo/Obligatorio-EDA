@@ -1,4 +1,5 @@
 #include "Sistema.hpp"
+#include "Pila.hpp"
 #include <iostream>
 using namespace std;
 bool listaVacia(Archivo lista)
@@ -100,7 +101,7 @@ void insertarSistema(Sistema &s, Sistema nuevo)
 		if (aux->sH == NULL)
 		{
 			aux->sH = nuevo;
-			nuevo->pPadre = aux;
+			nuevo->pPadre = aux->pPadre;
 		}
 		else
 		{
@@ -139,7 +140,7 @@ TipoRet DIR(Sistema &s, Cadena parametro)
 {
 	
 	Archivo aux = s->Parchivo;
-	Sistema auxsis = s, auxher=s;
+	Sistema auxsis = s,  auxher=s;
 	if (strcmp(parametro, "/s") == 0)
 	{
 		while(auxsis->sH)
@@ -165,6 +166,18 @@ TipoRet DIR(Sistema &s, Cadena parametro)
 	{
 		if(strcmp(parametro, "0")==0)
 		{
+			Sistema auxpadre = s;
+			Pila p = NULL;
+			while (auxpadre->pPadre != NULL)
+			{
+				apilar(p,crearNodoPila(auxpadre->pPadre->nombre));
+				auxpadre = auxpadre->pPadre;
+			}
+			while(p)
+			{
+				cout<<desapilar(p)->dato<<"/";
+			}
+			cout<<s->nombre<<"/"<<endl;
 			while (aux)
 			{
 				if (aux->soloLectura == 0)
