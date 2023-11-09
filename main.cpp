@@ -177,6 +177,12 @@ int main(int argc, char *argv[]) {
 				if(pal != NULL)
 				{
 					TipoRet ret = CD(sis, pal);
+					if(ret == OK)
+					{
+						Cadena cero = new char;
+						strcpy(cero, "0");
+						DIR(sis, cero);
+					}
 					if (ret == ERROR)
 						cout << "ERROR DETECTADO, ANALIZAR LA SENTENCIA ANTERIOR" << endl;
 				}
@@ -205,10 +211,27 @@ int main(int argc, char *argv[]) {
 			}
 			else if (strcmp(pal, "move") == 0) 
 			{
-				
-				TipoRet ret = MOVE(sis, pal, pal2);
-				if (ret == NO_IMPLEMENTADA)
-					cout << "NO IMPLEMENTADO"<<endl;
+				pal = strtok(NULL, divisor);
+				pal2 = strtok(NULL, divisor);
+				if (pal != NULL) 
+				{
+					if(pal2 != NULL)
+					{
+						TipoRet ret = MOVE(sis, pal, pal2);
+						if(ret == OK)
+							cout<<"Se a movido Correctamente"<<endl;
+						if(ret == ERROR)
+							cout<<"ERROR: LEER LA SENTENCIA ANTERIOR"<<endl;
+					}
+					else
+					{
+						cout << "Error: Falta el directorio destino"<< endl;
+					}
+				}
+				else
+				{
+					cout<<"Error: falta el nombre del archivo"<<endl;
+				}
 			}
 			else if (strcmp(pal, "destruirsistema") == 0) 
 			{
