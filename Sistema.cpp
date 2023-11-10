@@ -237,18 +237,18 @@ TipoRet DELETE(Sistema & s, Cadena nombreArchivo)
 {
 	Archivo aux = NULL;
 	Archivo aux2 = NULL;
+	aux = s->Parchivo;
 	if(listaVacia(s->Parchivo))
 	{
-		return ERROR;
+		cout<<"No hay archivos en este directorio"<<endl;
+		return NO_IMPLEMENTADA;
 	}
-	if(strcmp(s->Parchivo->nombre, nombreArchivo) == 0)
+	if(strcmp(aux->nombre, nombreArchivo) == 0 && aux->soloLectura == (false))
 	{
-		aux = s->Parchivo;
-		s->Parchivo = s->Parchivo->siguiente;
+		s->Parchivo = aux->siguiente;
 		delete(aux);
 		return OK;
 	}
-	aux = s->Parchivo;
 	while (aux->siguiente && strcmp(aux->siguiente->nombre, nombreArchivo) != 0)
 	{
 		aux = aux->siguiente;
@@ -269,6 +269,29 @@ TipoRet IFF(Sistema & s, Cadena nombreArchivo, Cadena texto)
 {
 	Archivo aux = NULL;
 	aux = s->Parchivo;
+	if(listaVacia(s->Parchivo))
+	{
+		cout<<"No hay archivos en este directorio"<<endl;
+		return NO_IMPLEMENTADA;
+	}
+	if(strcmp(aux->nombre, nombreArchivo) == 0)
+	{
+		int nuevoLargo = strlen(aux->contenido) + strlen(texto);
+		if (nuevoLargo <= TEXTO_MAX)
+		{
+			Cadena nuevoContenido = new char[nuevoLargo + 1];
+			strcpy(nuevoContenido, texto);
+			strcat(nuevoContenido, aux->contenido);
+			delete[] aux->contenido;
+			aux->contenido = nuevoContenido;
+			
+			return OK;
+		}
+		else
+		{
+			return ERROR;
+		}
+	}
 	while (aux->siguiente && strcmp(aux->siguiente->nombre, nombreArchivo) != 0)
 	{
 		aux = aux->siguiente;
@@ -302,6 +325,19 @@ TipoRet TYPE(Sistema & s, Cadena nombreArchivo)
 {
 	Archivo aux = NULL;
 	aux = s->Parchivo;
+	if(listaVacia(s->Parchivo))
+	{
+		cout<<"No hay archivos en este directorio"<<endl;
+		return NO_IMPLEMENTADA;
+	}
+	if(strcmp(aux->nombre, nombreArchivo) == 0)
+	{
+		if (strcmp(aux->contenido, "") != 0)
+			cout << aux->contenido << endl;
+		else
+			cout << "El archivo no tiene contenido" << endl;
+		return OK;
+	}
 	while (aux->siguiente && strcmp(aux->siguiente->nombre, nombreArchivo) != 0)
 	{
 		aux = aux->siguiente;
@@ -324,6 +360,28 @@ TipoRet ATTRIB(Sistema & s, Cadena nombreArchivo, Cadena parametro)
 {
 	Archivo aux = NULL;
 	aux = s->Parchivo;
+	if(listaVacia(s->Parchivo))
+	{
+		cout<<"No hay archivos en este directorio"<<endl;
+		return NO_IMPLEMENTADA;
+	}
+	if(strcmp(aux->nombre, nombreArchivo) == 0)
+	{
+		if (strcmp(parametro, "-w") == 0)
+		{
+			aux->soloLectura = (true);
+			return OK;
+		}
+		else if (strcmp(parametro, "+w") == 0)
+		{
+			aux->soloLectura = (false);
+			return OK;
+		}
+		else
+		{
+			cout << "Los parametros validos son +w para lectura y escritura, -w solo para lectursa" << endl;
+		}
+	}
 	while (aux->siguiente && strcmp(aux->siguiente->nombre, nombreArchivo) != 0)
 	{
 		aux = aux->siguiente;
