@@ -522,7 +522,7 @@ TipoRet MOVE(Sistema & s, Cadena nombre, Cadena directorioDestino)
 				CD(auxraiz, raiz);
 			for(int i = 1; i < contador; i++)
 			{
-				if(strcmp(palabras[i],auxsis->pH->nombre) == 0)
+				if(strcmp(palabras[i-1],auxsis->nombre) == 0 && strcmp(palabras[i],auxsis->pH->nombre) == 0 )
 				{
 					cout<<"ERROR:No se puede mover a un subdirectorio del origen"<<endl;
 					return ERROR;
@@ -553,11 +553,12 @@ TipoRet MOVE(Sistema & s, Cadena nombre, Cadena directorioDestino)
 			}
 			if (auxsis->sH != NULL)
 			{
+				auxcpy = auxsis->sH;
 				if(strcmp(auxraiz->nombre, raiz)!=0)
 					CD(auxraiz, raiz);
 				for(int i = 1; i < contador; i++)
 				{
-					if(strcmp(palabras[i],auxsis->sH->nombre) == 0)
+					if( strcmp(palabras[i-1],auxcpy->pPadre->nombre) == 0 && strcmp(palabras[i],auxcpy->nombre) == 0 )
 					{
 						cout<<"ERROR:No se puede mover a un subdirectorio del origen"<<endl;
 						return ERROR;
@@ -570,7 +571,7 @@ TipoRet MOVE(Sistema & s, Cadena nombre, Cadena directorioDestino)
 						return ERROR;
 					}
 				}	
-				auxcpy = auxsis->sH;
+//				auxcpy = auxsis->sH;
 				auxsis->sH = auxcpy->sH;
 				auxcpy->sH = NULL;
 				insertarSistema(auxraiz,auxcpy) ;
