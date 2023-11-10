@@ -2,6 +2,7 @@
 #include "Pila.hpp"
 #include <iostream>
 using namespace std;
+Sistema sisactaul;
 bool listaVacia(Archivo lista)
 {
 	return (lista == NULL);
@@ -137,7 +138,6 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo)
 	return NO_IMPLEMENTADA;
 }
 
-Sistema sisactaul;
 TipoRet DIR(Sistema &s, Cadena parametro)
 {
 	Pila p = NULL , p2 = NULL;
@@ -148,48 +148,7 @@ TipoRet DIR(Sistema &s, Cadena parametro)
 	strcpy (parametroS, "/s");
 	if (strcmp(parametro, "/s") == 0)
 	{
-		if (s != NULL)
-		{
-			if(auxpadre->pPadre != NULL)
-			{
-				
-				while (auxpadre->pPadre != NULL)
-				{
-					apilar(p, crearNodoPila(auxpadre->pPadre->nombre));
-					apilar(p2, crearNodoPila(auxpadre->pPadre->nombre));
-					auxpadre = auxpadre->pPadre;
-				}
-			}
-			while (p)
-			{
-				cout << desapilar(p)->dato << "/";
-			}
-			cout << auxsis->nombre << "/" << endl;
-			if(aux != NULL)
-			{
-				while (aux != NULL)
-				{
-						mostrarP(p2);
-						cout << auxsis->nombre << "/";
-					cout << aux->nombre <<endl;
-					aux = aux->siguiente;
-				}
-			}
-			// Llama recursivamente el primer hijos de este sistema
-			if (auxsis->pH != NULL)
-				DIR(auxsis->pH,parametroS);
-			// Llama recursivamente los siguientes hijos de este sistema
-			if (auxsis->pH != NULL)
-			{
-				if (auxsis->pH->sH != NULL)
-					DIR(s->pH->sH, parametroS);
-			}
-		}
-		return OK;
-	}
-	else
-	{
-		if (strcmp(parametro, "0") == 0)
+		if (s->Parchivo == NULL && s->pH == NULL)
 		{
 			while (auxpadre->pPadre != NULL)
 			{
@@ -201,33 +160,107 @@ TipoRet DIR(Sistema &s, Cadena parametro)
 				cout << desapilar(p)->dato << "/";
 			}
 			cout << s->nombre << "/" << endl;
-			while (aux)
+			cout<<"No hay archivos ni directorios"<<endl;
+		}
+		else
+		{
+			if (s != NULL)
 			{
-				if (aux->soloLectura == 0)
+				if(auxpadre->pPadre != NULL)
 				{
-					cout << endl
-						<< aux->nombre << "     Lectura/Escritura";
-					aux = aux->siguiente;
+					
+					while (auxpadre->pPadre != NULL)
+					{
+						apilar(p, crearNodoPila(auxpadre->pPadre->nombre));
+						apilar(p2, crearNodoPila(auxpadre->pPadre->nombre));
+						auxpadre = auxpadre->pPadre;
+					}
 				}
-				else if (aux->soloLectura == 1)
+				while (p)
 				{
-					cout << endl
-						<< aux->nombre << "     Lectura";
-					aux = aux->siguiente;
+					cout << desapilar(p)->dato << "/";
 				}
-			}
-			if (auxsis->pH != NULL)
-			{
-				auxsis = auxsis->pH;
-				while (auxsis != NULL)
+				cout << auxsis->nombre << "/" << endl;
+				if(aux != NULL)
 				{
-					cout << endl
-						<< auxsis->nombre;
-					auxsis = auxsis->sH;
+					while (aux != NULL)
+					{
+						mostrarP(p2);
+						cout << auxsis->nombre << "/";
+						cout << aux->nombre <<endl;
+						aux = aux->siguiente;
+					}
+				}
+				// Llama recursivamente el primer hijos de este sistema
+				if (auxsis->pH != NULL)
+					DIR(auxsis->pH,parametroS);
+				// Llama recursivamente los siguientes hijos de este sistema
+				if (auxsis->pH != NULL)
+				{
+					if (auxsis->pH->sH != NULL)
+						DIR(s->pH->sH, parametroS);
 				}
 			}
 		}
-		cout << endl;
+		return OK;
+	}
+	else
+	{
+		if (strcmp(parametro, "0") == 0)
+		{
+			if (s->Parchivo == NULL && s->pH == NULL)
+			{
+				while (auxpadre->pPadre != NULL)
+				{
+					apilar(p, crearNodoPila(auxpadre->pPadre->nombre));
+					auxpadre = auxpadre->pPadre;
+				}
+				while (p)
+				{
+					cout << desapilar(p)->dato << "/";
+				}
+				cout << s->nombre << "/" << endl;
+				cout<<"No hay archivos ni directorios"<<endl;
+			}
+			else
+			{
+				while (auxpadre->pPadre != NULL)
+				{
+					apilar(p, crearNodoPila(auxpadre->pPadre->nombre));
+					auxpadre = auxpadre->pPadre;
+				}
+				while (p)
+				{
+					cout << desapilar(p)->dato << "/";
+				}
+				cout << s->nombre << "/" << endl;
+				while (aux)
+				{
+					if (aux->soloLectura == 0)
+					{
+						cout << endl
+							<< aux->nombre << "     Lectura/Escritura";
+						aux = aux->siguiente;
+					}
+					else if (aux->soloLectura == 1)
+					{
+						cout << endl
+							<< aux->nombre << "     Lectura";
+						aux = aux->siguiente;
+					}
+				}
+				if (auxsis->pH != NULL)
+				{
+					auxsis = auxsis->pH;
+					while (auxsis != NULL)
+					{
+						cout << endl
+							<< auxsis->nombre;
+						auxsis = auxsis->sH;
+					}
+				}
+			}
+		}
 		return OK;
 	}
 	return NO_IMPLEMENTADA;
@@ -507,29 +540,36 @@ TipoRet RMDIR(Sistema & s, Cadena nombreDirectorio)
 	Sistema auxActual = s;
 	Sistema auxSub = s->pH;
 	// Si el directorio es el primer hijo
-	if (strcmp(auxActual->pH->nombre, nombreDirectorio) == 0)
+	if(s->pH != NULL)
 	{
-		s->pH = auxActual->pH->sH;
-		DESTRUIRSISTEMA(auxSub);
-		return OK;
-	}
-	// Busca el directorio a eliminar
-	while (auxSub->sH != NULL && strcmp(auxSub->sH->nombre, nombreDirectorio) != 0)
-	{
-		auxSub = auxSub->sH;
-	}
-	// Elimina todos los archivos y subdirectorios del directorio a eliminar
-	if (auxSub->sH != NULL)
-	{
-		Sistema AuxElim = auxSub->sH;
-		auxSub->sH = AuxElim->sH;
-		DESTRUIRSISTEMA(AuxElim);
-		return OK;
+		if (strcmp(auxActual->pH->nombre, nombreDirectorio) == 0)
+		{
+			s->pH = auxActual->pH->sH;
+			DESTRUIRSISTEMA(auxSub);
+			return OK;
+		}
+		// Busca el directorio a eliminar
+		while (auxSub->sH != NULL && strcmp(auxSub->sH->nombre, nombreDirectorio) != 0)
+		{
+			auxSub = auxSub->sH;
+		}
+		// Elimina todos los archivos y subdirectorios del directorio a eliminar
+		if (auxSub->sH != NULL)
+		{
+			Sistema AuxElim = auxSub->sH;
+			auxSub->sH = AuxElim->sH;
+			DESTRUIRSISTEMA(AuxElim);
+			return OK;
+		}
+		else
+		{
+			// No se encontrï¿½ el directorio a eliminar
+			return ERROR;
+		}
 	}
 	else
 	{
-		// No se encontrï¿½ el directorio a eliminar
-		return ERROR;
+		cout<<"No hay Subdirectorios"<<endl;
 	}
 	return NO_IMPLEMENTADA;
 }
@@ -786,4 +826,10 @@ TipoRet DESTRUIRSISTEMA(Sistema & s)
 void SistemaActual(Sistema s)
 {
 	sisactaul = s;
+}
+void strlwr(char* str) {
+	while (*str) {
+		*str = tolower(*str);//Tolower pasa caracter a caracter de mayuscula a minuscula
+		++str;
+	}
 }

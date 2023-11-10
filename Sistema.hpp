@@ -40,7 +40,8 @@ void insertarOrdenado(Sistema &, Sistema);
 void destruirListaArchivos(Archivo &);
 //
 // Funcion adicional
-Cadena strdup(const Cadena str);
+Cadena strdup(const Cadena);
+void strlwr(Cadena);
 //
 // Funciones de arbol
 Sistema crearNodo(Cadena);

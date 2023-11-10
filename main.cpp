@@ -5,9 +5,9 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 	Sistema sis = NULL;
-	Cadena aux1 = new char;
-	strcpy(aux1,"raiz");
-	insertarSistema(sis, crearNodo(aux1));
+	Cadena raiz = new char;
+	strcpy(raiz,"raiz");
+	insertarSistema(sis, crearNodo(raiz));
 	
 	Cadena palabras = new char[100]; // cadena a leer
 	Cadena pal = new char[100];      // donde guardo palabra obtenida actual
@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 	
 	do {
 		gets(palabras); // leer cadena completa
-//		cout<<strlwr("HOLA");
+		strlwr(palabras);
 		pal = strtok(palabras, divisor); // obtengo la primera palabra
 		if (pal != NULL) {
 			// verificar comando ingresado y realizar acciï¿½n correspondiente
@@ -43,11 +43,11 @@ int main(int argc, char *argv[]) {
 				SistemaActual(sis);
 				if(pal !=NULL && strcmp(pal,"/s")==0)
 				{
-						Cadena parametro;
-						parametro = pal;
-						TipoRet ret = DIR (sis, parametro);
-						if(ret==OK)
-							cout<<"";
+					Cadena parametro;
+					parametro = pal;
+					TipoRet ret = DIR (sis, parametro);
+					if(ret==OK)
+						cout<<endl;
 				}
 				else
 				{
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
 					strcpy(parametro, "0");
 					TipoRet ret = DIR (sis,parametro);
 					if(ret==OK)
-						cout<<"";
+						cout<<endl;
 				}
 			}
 			else if (strcmp(pal, "delete") == 0) 
@@ -189,7 +189,7 @@ int main(int argc, char *argv[]) {
 				}
 				else 
 				{
-						cout<<"Falta el Nombre del Subdirectorio al que quiere ingresar o el parametro .."<<endl;
+					cout<<"Falta el Nombre del Subdirectorio al que quiere ingresar o el parametro .."<<endl;
 				}
 			}
 			else if (strcmp(pal, "rmdir") == 0) 
@@ -202,8 +202,6 @@ int main(int argc, char *argv[]) {
 						cout<<"El subdirectorio se a eliminado exitosamente"<<endl;
 					else if(ret == ERROR)
 						cout<<"No existe el subdirectorio a eliminar"<<endl;
-					else if (ret == NO_IMPLEMENTADA)
-						cout << "NO IMPLEMENTADO"<<endl;
 				}
 				else 
 				{
@@ -236,10 +234,12 @@ int main(int argc, char *argv[]) {
 			}
 			else if (strcmp(pal, "destruirsistema") == 0) 
 			{
+				CD(sis, raiz);
 				TipoRet ret = DESTRUIRSISTEMA(sis);
-				strcpy(palabras,"exit");
-				if (ret == NO_IMPLEMENTADA)
-					cout << "NO IMPLEMENTADO"<<endl;
+				if(ret == OK)
+					cout<<"Sistema Destruido"<<endl;
+//				strcpy(palabras,"exitt");
+				
 			}
 			else if (strcmp(pal, "cls") == 0) 
 			{
@@ -247,7 +247,11 @@ int main(int argc, char *argv[]) {
 			}
 			else if (strcmp(pal, "exit") == 0) 
 			{
-				cout<<"Programa Terminado"<<endl;
+				CD(sis, raiz);
+				TipoRet ret = DESTRUIRSISTEMA(sis);
+				if(ret == OK)
+					cout<<"PROGRAMA FINALIZADO"<<endl;
+				strcpy(palabras,"exitt");
 			}
 			else 
 			{
@@ -255,7 +259,7 @@ int main(int argc, char *argv[]) {
 			}
 		}
 		
-	} while (strcmp(palabras, "exit") != 0);
+	} while (strcmp(palabras, "exitt") != 0);
 	
 	return 0;
 }
