@@ -180,9 +180,7 @@ int main(int argc, char *argv[]) {
 					TipoRet ret = CD(sis, pal);
 					if(ret == OK)
 					{
-						Cadena cero = new char;
-						strcpy(cero, "0");
-						DIR(sis, cero);
+						cout<<"A cambiado a "<<sis->nombre<<endl;
 					}
 					if (ret == ERROR)
 						cout << "ERROR DETECTADO, ANALIZAR LA SENTENCIA ANTERIOR" << endl;
