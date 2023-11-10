@@ -40,6 +40,7 @@ int main(int argc, char *argv[]) {
 			else if (strcmp(pal, "dir") == 0) 
 			{
 				pal = strtok(NULL, divisor);
+				SistemaActual(sis);
 				if(pal !=NULL && strcmp(pal,"/s")==0)
 				{
 						Cadena parametro;

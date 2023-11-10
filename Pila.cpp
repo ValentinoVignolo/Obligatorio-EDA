@@ -30,10 +30,9 @@ void mostrarP(Pila p)
 	aux = p;
 	while(aux)
 	{
-		cout<<"\t"<<aux->dato<<endl;
+		cout<<aux->dato<<"/";
 		aux = aux->siguiente;
 	}
-	system("pause");
 }
 
 Pila desapilar(Pila &p)

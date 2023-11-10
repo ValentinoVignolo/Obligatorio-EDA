@@ -46,6 +46,7 @@ Cadena strdup(const Cadena str);
 Sistema crearNodo(Cadena);
 void insertarSistema (Sistema &, Sistema);
 bool SistemaVacia(Sistema);
+void SistemaActual(Sistema);
 //
 //empiezan las funciones del obligatorio
 TipoRet CREATEFILE (Sistema &, Cadena);

@@ -1,6 +1,5 @@
 #include "Sistema.hpp"
 #include "Pila.hpp"
-#include "Colas.hpp"
 #include <iostream>
 using namespace std;
 bool listaVacia(Archivo lista)
@@ -137,81 +136,61 @@ TipoRet CREATEFILE(Sistema &s, Cadena nombreArchivo)
 	}
 	return NO_IMPLEMENTADA;
 }
-Pila pil = NULL;
+
+Sistema sisactaul;
 TipoRet DIR(Sistema &s, Cadena parametro)
 {
-	
+	Pila p = NULL , p2 = NULL;
 	Archivo aux = s->Parchivo;
 	Sistema auxsis = s;
+	Sistema auxpadre = s;
+	Cadena parametroS = new char;
+	strcpy (parametroS, "/s");
 	if (strcmp(parametro, "/s") == 0)
 	{
-		//		if (s->pH == NULL)
-		//		{
-		//			// Caso base: el sistema actual es NULL, termina.
-		//			return OK;
-		//		}
-		//		
-		//		if (auxsis->Parchivo != NULL)
-		//		{
-		//			Archivo auxArchivo = s->Parchivo;
-		//			while (auxArchivo != NULL)
-		//			{
-		//				apilar(pil, crearNodoPila(auxsis->nombre));
-		//				if (auxsis->pPadre != NULL)
-		//				{
-		//					while (strcmp(auxsis->pPadre->nombre,s->nombre)!=0  )
-		//					{
-		//						apilar(pil, crearNodoPila(auxsis->pPadre->nombre));
-		//						CD(auxsis, "..");
-		//					}
-		//				}
-		//				cout << endl;
-		//				while (pil)
-		//				{
-		//					cout << desapilar(pil)->dato << "/";
-		//				}
-		//				cout << auxArchivo->nombre<<endl;
-		//				auxArchivo = auxArchivo->siguiente;
-		//			}
-		//			auxsis = s;
-		//			if (auxsis->pH != NULL)
-		//			{
-		//				cout<<"DEBUG: ENTRO AL IF DE PH"<<endl;
-		//				apilar(pil, crearNodoPila(auxsis->pH->nombre));
-		//				cout<<"DEBUG: APILO EL NOMBRE DE PH"<<endl;
-		//				DIR(auxsis->pH,"/s");
-		//				cout<<"DEBUG: DIR RETORNA"<<endl;
-		//				mostrarP(pil);
-		//				system("pause");
-		//				if (auxsis->pH->sH != NULL)
-		//				{
-		//					
-		//				}
-		//			}
-		//			return OK;
-		//		}
-		//		else if (auxsis->pH != NULL)
-		//		{
-		//			cout<<"DEBUG: ENTRO AL IF DE PH"<<endl;
-		//			apilar(pil, crearNodoPila(auxsis->pH->nombre));
-		//			cout<<"DEBUG: APILO EL NOMBRE DE PH"<<endl;
-		//			DIR(auxsis->pH,"/s");
-		//			cout<<"DEBUG: DIR RETORNA"<<endl;
-		//			mostrarP(pil);
-		//			system("pause");
-		//			if (auxsis->pH->sH != NULL)
-		//			{
-		//				
-		//			}
-		//			return OK;
-		//		}
+		if (s != NULL)
+		{
+			if(auxpadre->pPadre != NULL)
+			{
+				
+				while (auxpadre->pPadre != NULL)
+				{
+					apilar(p, crearNodoPila(auxpadre->pPadre->nombre));
+					apilar(p2, crearNodoPila(auxpadre->pPadre->nombre));
+					auxpadre = auxpadre->pPadre;
+				}
+			}
+			while (p)
+			{
+				cout << desapilar(p)->dato << "/";
+			}
+			cout << auxsis->nombre << "/" << endl;
+			if(aux != NULL)
+			{
+				while (aux != NULL)
+				{
+						mostrarP(p2);
+						cout << auxsis->nombre << "/";
+					cout << aux->nombre <<endl;
+					aux = aux->siguiente;
+				}
+			}
+			// Llama recursivamente el primer hijos de este sistema
+			if (auxsis->pH != NULL)
+				DIR(auxsis->pH,parametroS);
+			// Llama recursivamente los siguientes hijos de este sistema
+			if (auxsis->pH != NULL)
+			{
+				if (auxsis->pH->sH != NULL)
+					DIR(s->pH->sH, parametroS);
+			}
+		}
+		return OK;
 	}
 	else
 	{
 		if (strcmp(parametro, "0") == 0)
 		{
-			Sistema auxpadre = s;
-			Pila p = NULL;
 			while (auxpadre->pPadre != NULL)
 			{
 				apilar(p, crearNodoPila(auxpadre->pPadre->nombre));
@@ -487,7 +466,6 @@ TipoRet RMDIR(Sistema & s, Cadena nombreDirectorio)
 		Sistema AuxElim = auxSub->sH;
 		auxSub->sH = AuxElim->sH;
 		DESTRUIRSISTEMA(AuxElim);
-		cout << "DEBUG: destruir sistema devolvio" << endl;
 		return OK;
 	}
 	else
@@ -571,7 +549,6 @@ TipoRet MOVE(Sistema & s, Cadena nombre, Cadena directorioDestino)
 						return ERROR;
 					}
 				}	
-//				auxcpy = auxsis->sH;
 				auxsis->sH = auxcpy->sH;
 				auxcpy->sH = NULL;
 				insertarSistema(auxraiz,auxcpy) ;
@@ -721,7 +698,14 @@ TipoRet DESTRUIRSISTEMA(Sistema & s)
 	if (s != NULL)
 	{
 		// Llama a la funcion para destruir la lista de archivos apuntada por este sistema
-		destruirListaArchivos(s->Parchivo);
+		while (s->Parchivo != NULL)
+		{
+			Archivo auxElim = s->Parchivo;
+			s->Parchivo = s->Parchivo->siguiente;
+			delete auxElim->nombre;
+			delete auxElim->contenido;
+			delete auxElim;
+		}
 		
 		// Llama a la funcion para destruir recursivamente los siguientes hijos de este sistema
 		if (s->pH != NULL)
@@ -741,31 +725,7 @@ TipoRet DESTRUIRSISTEMA(Sistema & s)
 	s = NULL;
 	return OK;
 }
-void destruirListaArchivos(Archivo & archi)
+void SistemaActual(Sistema s)
 {
-	while (archi != NULL)
-	{
-		Archivo auxElim = archi;
-		archi = archi->siguiente;
-		delete auxElim->nombre;
-		delete auxElim->contenido;
-		delete auxElim;
-	}
+	sisactaul = s;
 }
-//  Pila DirRecursivo(Sistema s,Pila& P)
-//  {
-//     Sistema aux=s, auxher=s;
-//     if(aux==NULL)
-//     {
-//        return P;
-//     }
-//     else
-//     {
-//        if()
-//		{
-//        apilar(p, crearNodoPila(aux->pH->nombre);
-//        aux=aux->pH;
-//        DirRecursivo(aux,P)
-//		}
-//     }
-//  }
